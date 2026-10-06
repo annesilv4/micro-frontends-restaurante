@@ -4,19 +4,21 @@ const pratos = [
   {
     id: 1,
     title: "X-Búrguer Artesanal",
-    description: "Pão brioche, carne artesanal, musarela e presunto",
+    description: "Pão brioche, carne artesanal, mussarela e presunto",
     price: 16,
   },
   {
     id: 2,
     title: "X-Salada",
-    description: "Pão de hambúrguer, carne, queijo, alface, tomate e maionese",
+    description:
+      "Pão de hambúrguer, carne, queijo, alface, tomate e maionese",
     price: 14,
   },
   {
     id: 3,
     title: "X-Bacon",
-    description: "Pão brioche, carne, queijo, bacon crocante e molho barbecue",
+    description:
+      "Pão brioche, carne, queijo, bacon crocante e molho barbecue",
     price: 18,
   },
   {
@@ -54,20 +56,35 @@ const pratos = [
 
 export default function Menu() {
   const addToOrder = (dish) => {
-    window.dispatchEvent(new CustomEvent("addToOrder", { detail: dish }));
+    window.dispatchEvent(
+      new CustomEvent("addToOrder", {
+        detail: dish,
+      })
+    );
   };
 
   return (
     <div>
-      <h2>Cardápio</h2>
-      {pratos.map((dish) => (
-        <div key={dish.id}>
-          <h3>{dish.title}</h3>
-          <p>{dish.description}</p>
-          <p>{dish.price}</p>
-          <button onClick={() => addToOrder(dish)}>Adicionar ao pedido</button>
-        </div>
-      ))}
+      <h2>🍔 Cardápio</h2>
+
+      <div className="menu-grid">
+        {pratos.map((dish) => (
+          <article className="menu-card" key={dish.id}>
+            <h3>{dish.title}</h3>
+
+            <p>{dish.description}</p>
+
+            <strong>R$ {dish.price.toFixed(2)}</strong>
+
+            <button
+              type="button"
+              onClick={() => addToOrder(dish)}
+            >
+              Adicionar ao pedido
+            </button>
+          </article>
+        ))}
+      </div>
     </div>
   );
 }
