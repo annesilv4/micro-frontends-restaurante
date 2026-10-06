@@ -1,40 +1,25 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# Micro Pedido
 
-## Getting Started
+Aplicação Next.js independente que exibe os pratos adicionados pelo usuário ao pedido. A seleção fica no estado React do componente enquanto ele estiver montado; não há persistência em banco de dados ou armazenamento entre recargas.
 
-First, run the development server:
+## Executar individualmente
+
+Na raiz do repositório:
 
 ```bash
+cd micro-pedido
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Acesse http://localhost:3002. Para build de produção, use `npm run build` e depois `npm run start`.
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+## Integração com o container
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+O projeto usa Next.js 15 com Pages Router. A configuração de Module Federation em [`next.config.mjs`](./next.config.mjs) registra o remote `pedido` e expõe o componente `./Order`, consumido pelo container como `pedido/Order`.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+O componente [`Order`](./components/Order.js) escuta o evento global `addToOrder` em `window`. Cada evento contém os dados do prato em `event.detail`; o componente os acrescenta ao estado local e mostra os itens. O listener é removido quando o componente é desmontado.
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+O evento só conecta o cardápio ao pedido quando ambos estão carregados na mesma página — normalmente a página do container em http://localhost:3000. Ao executar o Micro Pedido sozinho, não há outro micro na página para disparar o evento.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+Para subir o sistema integrado e entender o fluxo completo, consulte [Container e comunicação entre os micros](../container/README.md).

@@ -1,40 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# Container e comunicação entre os micros
 
-## Getting Started
+O container é a aplicação principal do projeto. Ele importa os componentes remotos do Micro Cardápio e do Micro Pedido usando Webpack Module Federation e os renderiza com `React.lazy` e `Suspense`.
 
-First, run the development server:
+## Executar
+
+O Micro Cardápio e o Micro Pedido precisam estar rodando antes do container, respectivamente nas portas 3001 e 3002.
+
+Em terminais separados, execute a partir da raiz do repositório:
 
 ```bash
+cd micro-cardapio
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+```bash
+cd micro-pedido
+npm install
+npm run dev
+```
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+```bash
+cd container
+npm install
+npm run dev
+```
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+Abra http://localhost:3000. Para gerar e executar builds de produção, use `npm run build` e, em seguida, `npm run start` em cada aplicação, mantendo cada uma em seu terminal.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+## Integração por Module Federation
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Em [`next.config.mjs`](./next.config.mjs), o container declara dois remotes:
 
-## Learn More
+| Nome do remote | Origem | Módulo importado |
+|---|---|---|
+| `cardapio` | `http://localhost:3001/_next/static/{chunks\|ssr}/remoteEntry.js` | `cardapio/Menu` |
+| `pedido` | `http://localhost:3002/_next/static/{chunks\|ssr}/remoteEntry.js` | `pedido/Order` |
 
-To learn more about Next.js, take a look at the following resources:
+As aplicações remotas expõem seus componentes em `./Menu` e `./Order`. A página principal importa esses módulos com `React.lazy` e os envolve em `Suspense` para exibir um conteúdo de carregamento enquanto são obtidos.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
+## Comunicação entre cardápio e pedido
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Os micros não dependem de importações diretas entre si nem de um backend para compartilhar a seleção. O navegador serve como canal de eventos:
 
-## Deploy on Vercel
+1. Ao clicar em **Adicionar ao pedido**, o Micro Cardápio dispara `new CustomEvent("addToOrder", { detail: dish })` em `window`.
+2. O Micro Pedido registra um listener para `addToOrder` e inclui `event.detail` no estado local do pedido.
+3. O React renderiza os pratos selecionados. O listener é removido quando o componente é desmontado.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Esse canal funciona quando os dois componentes estão na mesma página do container, pois compartilham o mesmo `window`. Executar cada micro separadamente permite visualizar sua página independente, mas não integra os dois nem compartilha eventos entre abas.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+## Aplicações individuais
+
+- [Micro Cardápio](../micro-cardapio/README.md)
+- [Micro Pedido](../micro-pedido/README.md)
+- [Visão geral do projeto](../README.md)
