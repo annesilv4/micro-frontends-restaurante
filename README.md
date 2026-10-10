@@ -6,7 +6,7 @@ Projeto de demonstração de uma aplicação de pedidos dividida em três aplica
 - [`micro-cardapio/`](./micro-cardapio/README.md): lista de pratos e ação para adicioná-los ao pedido.
 - [`micro-pedido/`](./micro-pedido/README.md): exibe os pratos escolhidos.
 
-As três aplicações usam Next.js 15 com Pages Router e Webpack Module Federation. Para executar a experiência integrada, siga as instruções em [Container e comunicação entre os micros](./container/README.md).
+As três aplicações usam Next.js 15 com Pages Router e Webpack Module Federation. As versões de `next`, `webpack` e `@module-federation/nextjs-mf` estão fixadas nos `package.json` e refletidas nos `package-lock.json` de cada app. Para executar a experiência integrada, siga as instruções em [Container e comunicação entre os micros](./container/README.md).
 
 ## Requisitos
 
@@ -19,19 +19,19 @@ Abra três terminais na raiz do repositório e inicie cada aplicação em seu pr
 
 ```bash
 cd micro-cardapio
-npm install
+npm ci
 npm run dev
 ```
 
 ```bash
 cd micro-pedido
-npm install
+npm ci
 npm run dev
 ```
 
 ```bash
 cd container
-npm install
+npm ci
 npm run dev
 ```
 

@@ -8,7 +8,7 @@ Na raiz do repositório:
 
 ```bash
 cd micro-pedido
-npm install
+npm ci
 npm run dev
 ```
 

@@ -10,19 +10,19 @@ Em terminais separados, execute a partir da raiz do repositório:
 
 ```bash
 cd micro-cardapio
-npm install
+npm ci
 npm run dev
 ```
 
 ```bash
 cd micro-pedido
-npm install
+npm ci
 npm run dev
 ```
 
 ```bash
 cd container
-npm install
+npm ci
 npm run dev
 ```
 

@@ -8,7 +8,7 @@ Na raiz do repositório:
 
 ```bash
 cd micro-cardapio
-npm install
+npm ci
 npm run dev
 ```
 
